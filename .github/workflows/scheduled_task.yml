@@ -1,0 +1,23 @@
+name: Daily Scheduled Task
+
+on:
+  schedule:
+    # Runs every day at 00:00 UTC
+    - cron: '0 0 * * *'
+  # Allows manual triggering of the workflow from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  run-task:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run the simulated 24/7 operation script
+        # Replace 'your_script.sh' with the actual command or script
+        run: |
+          echo "Simulating a daily task..."
+          # Add your command(s) here
+          ./your_script.sh
