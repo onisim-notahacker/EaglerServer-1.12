@@ -1,0 +1,54 @@
+    name: Simulate 24/7 Operation
+
+    on:
+      schedule:
+        # Runs every 15 minutes. Adjust as needed for your "24/7" simulation frequency.
+        - cron: '*/15 * * * *' 
+      workflow_dispatch: # Allows manual triggering
+
+    jobs:
+      run-in-codespace:
+        runs-on: ubuntu-latest # Or a specific self-hosted runner if desired
+        steps:
+          - name: Checkout repository
+            uses: actions/checkout@v4
+
+          - name: Create or connect to Codespace and run commands
+            run: |
+              # Replace 'your-codespace-name' with a unique identifier or omit for a new one
+              # You might need to install 'gh' CLI if not already present on the runner
+              # For persistent interaction, consider using a specific Codespace name.
+              # This example opens a new Codespace if one doesn't exist.
+              
+              # Install GitHub CLI if not present (might be needed on some runners)
+              # sudo apt-get update && sudo apt-get install -y gh
+
+              # Open or connect to a Codespace
+              # This command will open a new Codespace or connect to an existing one
+              # if you specify a name that already exists and is available.
+              # Note: Codespaces have idle timeouts. This action will create a new one
+              # or restart an existing one, not keep one perpetually open.
+              echo "Attempting to open/connect to Codespace..."
+              gh codespace create --repo ${{ github.repository }} --machine Standard_DS2_v2 || \
+              gh codespace ssh -c 'your-codespace-name' || true
+
+              # Execute commands within the Codespace
+              # This is where your "24/7 operation" logic goes.
+              # Example: Run a script, update dependencies, perform a task.
+              # This requires a way to execute commands remotely within the Codespace.
+              # A common approach is to have a script within your repository
+              # that the Codespace executes upon startup or via SSH.
+              echo "Executing simulated 24/7 operations within Codespace..."
+              # Example: Run a script located in your repository
+              # gh codespace ssh -c 'your-codespace-name' --command 'bash /workspaces/your-repo/your_script.sh'
+              # Or, if using a devcontainer, commands can be part of the devcontainer.json lifecycle scripts.
+              
+              # Simulate some work
+              echo "Simulating work for 30 seconds..."
+              sleep 30
+              echo "Simulated work complete."
+
+              # Close the Codespace (optional, as it will idle out eventually)
+              # gh codespace delete -c 'your-codespace-name' -f || true
+            env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
